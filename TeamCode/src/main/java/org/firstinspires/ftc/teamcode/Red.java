@@ -76,14 +76,25 @@ public class Red extends LinearOpMode {
                 drive.followTrajectory(traj);
             } if (selection == 2) {
                 traj = drive.trajectoryBuilder(new Pose2d())
-                        .splineTo(new Vector2d(12.5, 0), 0)
-                        .splineTo(new Vector2d(25, -3), Math.toRadians(-45))
+                        .splineTo(new Vector2d(28.5, 0), 0)
                         .build();
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
-                        .splineTo(new Vector2d(20, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(20, -34), Math.toRadians(-90))
+                        .splineTo(new Vector2d(25, -3), Math.toRadians(-90))
+                        .splineTo(new Vector2d(25, -35), Math.toRadians(-90))
+                        .build();
+                drive.followTrajectory(traj);
+            } if (selection == 1) {
+                traj = drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(12.5, 0), 0)
+                        .splineTo(new Vector2d(25, 4), Math.toRadians(45))
+                        .build();
+                drive.followTrajectory(traj);
+                traj = drive.trajectoryBuilder(traj.end(), true)
+                        //.back(4)
+                        //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
+                        .splineTo(new Vector2d(31, -36), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(traj);
             }
