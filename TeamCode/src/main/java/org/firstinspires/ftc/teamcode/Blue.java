@@ -23,8 +23,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
-@Autonomous(name="Red Backstage")
-public class Red extends LinearOpMode {
+@Autonomous(name="Blue Backstage")
+public class Blue extends LinearOpMode {
     private FirstPipelineRevised firstPipelineRevised; //Create an object of the VisionProcessor Class
     private VisionPortal portal;
     private Servo claw = null;
@@ -70,8 +70,8 @@ public class Red extends LinearOpMode {
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
-                        .splineTo(new Vector2d(20, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(20.5, -34), Math.toRadians(-90))
+                        //.splineTo(new Vector2d(20, 3), Math.toRadians(-90))
+                        .splineTo(new Vector2d(20.5, 34), Math.toRadians(90))
                         .build();
                 drive.followTrajectory(traj);
             } if (selection == 2) {
@@ -81,8 +81,12 @@ public class Red extends LinearOpMode {
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
-                        .splineTo(new Vector2d(27, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(27, -35), Math.toRadians(-90))
+                        .splineTo(new Vector2d(27, 3), Math.toRadians(90))
+                        .splineTo(new Vector2d(27, 20), Math.toRadians(90))
+                        .build();
+                drive.followTrajectory(traj);
+                traj = drive.trajectoryBuilder(traj.end(), true)
+                        .back(17)
                         .build();
                 drive.followTrajectory(traj);
             } if (selection == 1) {
@@ -94,7 +98,7 @@ public class Red extends LinearOpMode {
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         //.back(4)
                         //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(31.5, -35), Math.toRadians(-90))
+                        .splineTo(new Vector2d(31.5, 35), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(traj);
             }
