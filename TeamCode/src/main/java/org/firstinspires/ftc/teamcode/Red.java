@@ -92,6 +92,7 @@ public class Red extends LinearOpMode {
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(firstPipelineRevised)
+                .addProcessor(processor)
                 .setCameraResolution(new Size(1280, 720))
                 .build();
         FtcDashboard.getInstance().startCameraStream(processor, 0);
