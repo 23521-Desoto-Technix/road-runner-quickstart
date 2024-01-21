@@ -65,15 +65,19 @@ public class Blue extends LinearOpMode {
             if (selection == 3) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(12.5, 0), 0)
-                        .splineTo(new Vector2d(25, -3), Math.toRadians(-45))
+                        .splineTo(new Vector2d(25, -3.5), Math.toRadians(-45))
                         .build();
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
-                        //.splineTo(new Vector2d(20, 3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(20.5, 34), Math.toRadians(90))
+                        .splineTo(new Vector2d(33.5, 26), Math.toRadians(90))
+                        .splineTo(new Vector2d(35.5, 35.5), Math.toRadians(90))
                         .build();
                 drive.followTrajectory(traj);
+                traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
+                        .splineTo(new Vector2d(33.5, 34.5), Math.toRadians(90))
+                        .build();
+                //drive.followTrajectory(traj);
             } if (selection == 2) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(28.5, 0), 0)
@@ -81,24 +85,32 @@ public class Blue extends LinearOpMode {
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
-                        .splineTo(new Vector2d(27, 3), Math.toRadians(90))
-                        .splineTo(new Vector2d(27, 20), Math.toRadians(90))
+                        //.splineTo(new Vector2d(26.5, 3), Math.toRadians(90))
+                        .splineTo(new Vector2d(26.5, 36), Math.toRadians(90))
                         .build();
                 drive.followTrajectory(traj);
-                traj = drive.trajectoryBuilder(traj.end(), true)
-                        .back(17)
+                /*
+                drive.turn(Math.toRadians(-90));
+                drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .back(37)
                         .build();
-                drive.followTrajectory(traj);
+                drive.followTrajectory(traj);*/
+
             } if (selection == 1) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(12.5, 0), 0)
-                        .splineTo(new Vector2d(25, 4), Math.toRadians(45))
+                        .splineTo(new Vector2d(27, 4), Math.toRadians(45))
                         .build();
                 drive.followTrajectory(traj);
                 traj = drive.trajectoryBuilder(traj.end(), true)
-                        //.back(4)
+                        .back(4)
                         //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(31.5, 35), Math.toRadians(-90))
+                        //.splineTo(new Vector2d(22, 35), Math.toRadians(90))
+                        .build();
+                drive.followTrajectory(traj);
+                drive.turn(Math.toRadians(-145.5));
+                traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
+                        .splineTo(new Vector2d(23, 36), Math.toRadians(90))
                         .build();
                 drive.followTrajectory(traj);
             }
@@ -109,9 +121,9 @@ public class Blue extends LinearOpMode {
             while (leftArm.getCurrentPosition() < 537) {}
             claw.setPosition(0.5);
             sleep(100);
-            leftArm.setTargetPosition(0);
-            rightArm.setTargetPosition(0);
-            while (leftArm.getCurrentPosition() > 10) {}
+            leftArm.setTargetPosition(250);
+            rightArm.setTargetPosition(250);
+            while (leftArm.getCurrentPosition() > 250) {}
             traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
                     .splineTo(new Vector2d(22, -31), Math.toRadians(270))
                     .build();

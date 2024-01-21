@@ -4,12 +4,22 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.Size;
 import org.firstinspires.ftc.teamcode.FirstPipelineRevised;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -23,6 +33,13 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
+import com.acmerobotics.dashboard.FtcDashboard;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import java.util.concurrent.atomic.AtomicReference;
+
+
 @Autonomous(name="Red Backstage")
 public class Red extends LinearOpMode {
     private FirstPipelineRevised firstPipelineRevised; //Create an object of the VisionProcessor Class
@@ -31,8 +48,38 @@ public class Red extends LinearOpMode {
     IMU imu;
     private DcMotor leftArm = null;
     private DcMotor rightArm = null;
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
+        private final AtomicReference<Bitmap> lastFrame =
+                new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
+        @Override
+        public void init(int width, int height, CameraCalibration calibration) {
+            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+        }
+
+        @Override
+        public Object processFrame(Mat frame, long captureTimeNanos) {
+            Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(frame, b);
+            lastFrame.set(b);
+            return null;
+        }
+
+        @Override
+        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
+                                float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
+                                Object userContext) {
+            // do nothing
+        }
+
+        @Override
+        public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException {
+        final CameraStreamProcessor processor = new CameraStreamProcessor();
         firstPipelineRevised = new FirstPipelineRevised();
         leftArm = hardwareMap.get(DcMotor.class, "left_arm");
         rightArm = hardwareMap.get(DcMotor.class, "right_arm");
@@ -47,6 +94,7 @@ public class Red extends LinearOpMode {
                 .addProcessor(firstPipelineRevised)
                 .setCameraResolution(new Size(1280, 720))
                 .build();
+        FtcDashboard.getInstance().startCameraStream(processor, 0);
         claw = hardwareMap.get(Servo.class, "claw");
         ModernRoboticsI2cRangeSensor rangeSensor;
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
@@ -71,7 +119,7 @@ public class Red extends LinearOpMode {
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
                         .splineTo(new Vector2d(20, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(20.5, -34), Math.toRadians(-90))
+                        .splineTo(new Vector2d(20, -34.5), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(traj);
             } if (selection == 2) {
@@ -82,7 +130,7 @@ public class Red extends LinearOpMode {
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         .back(2)
                         .splineTo(new Vector2d(27, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(27, -35), Math.toRadians(-90))
+                        .splineTo(new Vector2d(27, -36), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(traj);
             } if (selection == 1) {
@@ -94,20 +142,24 @@ public class Red extends LinearOpMode {
                 traj = drive.trajectoryBuilder(traj.end(), true)
                         //.back(4)
                         //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(31.5, -35), Math.toRadians(-90))
+                        .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(traj);
+                traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
+                        .build();
+                //drive.followTrajectory(traj);
             }
-            leftArm.setTargetPosition(567);
-            rightArm.setTargetPosition(567);
+            leftArm.setTargetPosition(537);
+            rightArm.setTargetPosition(537);
             leftArm.setPower(1);
             rightArm.setPower(1);
             while (leftArm.getCurrentPosition() < 537) {}
             claw.setPosition(0.5);
             sleep(100);
-            leftArm.setTargetPosition(0);
-            rightArm.setTargetPosition(0);
-            while (leftArm.getCurrentPosition() > 10) {}
+            leftArm.setTargetPosition(250);
+            rightArm.setTargetPosition(250);
+            while (leftArm.getCurrentPosition() > 250) {}
             traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
                     .splineTo(new Vector2d(22, -31), Math.toRadians(270))
                     .build();
