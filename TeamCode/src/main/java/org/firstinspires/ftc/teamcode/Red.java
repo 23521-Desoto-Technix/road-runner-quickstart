@@ -99,10 +99,18 @@ public class Red extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");
         ModernRoboticsI2cRangeSensor rangeSensor;
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        boolean do_yellow = true;
         claw.setPosition(0.61);
         while (opModeInInit()) {
             telemetry.addLine(String.valueOf(firstPipelineRevised.getSelection()));
+            telemetry.addData("Yellow? ", do_yellow);
             telemetry.update();
+            if (gamepad1.dpad_right) {
+                do_yellow = true;
+            }
+            if (gamepad1.dpad_left) {
+                do_yellow = false;
+            }
         }
         waitForStart();
         portal.setProcessorEnabled(firstPipelineRevised, true);
@@ -114,57 +122,87 @@ public class Red extends LinearOpMode {
             if (selection == 3) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(12.5, 0), 0)
-                        .splineTo(new Vector2d(25, -3), Math.toRadians(-45))
+                        .splineTo(new Vector2d(27, -3), Math.toRadians(-45))
                         .build();
                 drive.followTrajectory(traj);
-                traj = drive.trajectoryBuilder(traj.end(), true)
-                        .back(2)
-                        .splineTo(new Vector2d(20, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(20, -34.5), Math.toRadians(-90))
-                        .build();
-                drive.followTrajectory(traj);
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            //.back(2)
+                            //.splineTo(new Vector2d(20, -3), Math.toRadians(135))
+                            .splineTo(new Vector2d(22, -34.5), Math.toRadians(-90))
+                            .build();
+                    drive.followTrajectory(traj);
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
             } if (selection == 2) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(28.5, 0), 0)
                         .build();
                 drive.followTrajectory(traj);
-                traj = drive.trajectoryBuilder(traj.end(), true)
-                        .back(2)
-                        .splineTo(new Vector2d(27, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(27, -36), Math.toRadians(-90))
-                        .build();
-                drive.followTrajectory(traj);
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            .back(2)
+                            .splineTo(new Vector2d(27, -3), Math.toRadians(-90))
+                            .splineTo(new Vector2d(27, -36), Math.toRadians(-90))
+                            .build();
+                    drive.followTrajectory(traj);
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
             } if (selection == 1) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(12.5, 0), 0)
-                        .splineTo(new Vector2d(25, 4), Math.toRadians(45))
+                        .splineTo(new Vector2d(27, 4), Math.toRadians(45))
                         .build();
                 drive.followTrajectory(traj);
-                traj = drive.trajectoryBuilder(traj.end(), true)
-                        //.back(4)
-                        //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
-                        .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
-                        .build();
-                drive.followTrajectory(traj);
-                traj = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
-                        .build();
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            //.back(5)
+                            //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
+                            .splineTo(new Vector2d(35, -27), Math.toRadians(-90))
+                            .build();
+                    drive.followTrajectory(traj);
+                    telemetry.addData("Heading", drive.getRawExternalHeading());
+                    telemetry.update();
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
+                            .back(8)
+                            .build();
+                    drive.followTrajectory(traj);
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineTo(new Vector2d(35, -25), Math.toRadians(-90))
+                            .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
+                            .build();
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
                 //drive.followTrajectory(traj);
             }
-            leftArm.setTargetPosition(537);
-            rightArm.setTargetPosition(537);
-            leftArm.setPower(1);
-            rightArm.setPower(1);
-            while (leftArm.getCurrentPosition() < 537) {}
-            claw.setPosition(0.5);
-            sleep(100);
-            leftArm.setTargetPosition(250);
-            rightArm.setTargetPosition(250);
-            while (leftArm.getCurrentPosition() > 250) {}
-            traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
-                    .splineTo(new Vector2d(22, -31), Math.toRadians(270))
-                    .build();
-            //drive.followTrajectory(traj);
+            if (do_yellow) {
+                leftArm.setTargetPosition(537);
+                rightArm.setTargetPosition(537);
+                leftArm.setPower(1);
+                rightArm.setPower(1);
+                while (leftArm.getCurrentPosition() < 537) {
+                }
+                claw.setPosition(0.5);
+                sleep(100);
+                leftArm.setTargetPosition(150);
+                rightArm.setTargetPosition(150);
+                while (leftArm.getCurrentPosition() > 250) {
+                }
+                stop();
+            }
         }
 
 
