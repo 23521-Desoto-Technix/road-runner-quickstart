@@ -173,7 +173,7 @@ public class Red extends LinearOpMode {
                     telemetry.update();
                     drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
-                            .back(8)
+                            .back(9)
                             .build();
                     drive.followTrajectory(traj);
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate())

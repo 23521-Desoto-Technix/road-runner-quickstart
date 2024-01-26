@@ -111,7 +111,7 @@ public class TankMode_WithMechanism extends OpMode
         wrist.setDirection(Servo.Direction.FORWARD);
         wrist.setPosition(270);
         claw.setDirection(Servo.Direction.FORWARD);
-        claw.setPosition(0.5);
+        claw.setPosition(0.595);
         launcher.setDirection(Servo.Direction.REVERSE);
         launcher.setPosition(0);
 
