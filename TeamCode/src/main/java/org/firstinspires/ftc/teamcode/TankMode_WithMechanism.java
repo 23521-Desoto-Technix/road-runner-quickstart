@@ -153,7 +153,6 @@ public class TankMode_WithMechanism extends OpMode
         boolean wristDown;
         boolean clawButtonOpen;
         boolean clawButtonClose;
-        boolean defaultAutoButton;
         boolean scoreButton;
         double x = claw.getPosition();
         double y = wrist.getPosition();
@@ -170,7 +169,6 @@ public class TankMode_WithMechanism extends OpMode
         wristDown = gamepad2.dpad_down;
         clawButtonOpen = gamepad2.a;
         clawButtonClose = gamepad2.b;
-        defaultAutoButton = gamepad2.y;
         scoreButton = gamepad2.x;
         launchButton = gamepad2.right_bumper;
 
@@ -203,31 +201,12 @@ public class TankMode_WithMechanism extends OpMode
                 }
             }
         }
-        if (defaultAutoButton) {
-            if (leftArm.getCurrentPosition() < 110) {
-                leftArm.setTargetPosition(10);
-                rightArm.setTargetPosition(10);
-                leftArm.setPower(0.25);
-                rightArm.setPower(0.25);
-            } else {
-                leftArm.setPower(0.5);
-                rightArm.setPower(0.5);
-                leftArm.setTargetPosition(100);
-                rightArm.setTargetPosition(100);
-            };
-            
-            rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            
-            
-            rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wrist.setPosition(0);
-        } else if (scoreButton) {
+        if (scoreButton) {
             leftArm.setPower(1);
-            leftArm.setTargetPosition(550);
+            leftArm.setTargetPosition(315);
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightArm.setPower(1);
-            rightArm.setTargetPosition(550);
+            rightArm.setTargetPosition(315);
             rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.setPosition(180);
         } else if (armPower == 0){
