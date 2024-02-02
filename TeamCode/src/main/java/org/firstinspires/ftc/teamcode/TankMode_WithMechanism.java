@@ -203,7 +203,7 @@ public class TankMode_WithMechanism extends OpMode
         }
         if (scoreButton) {
             double offset = 0;
-            offset = (100 - abs(540 - leftArm.getPosition())) / 100;
+            offset = (100 - abs(540 - leftArm.getCurrentPosition())) / 100;
             leftArm.setPower(1 - offset);
             leftArm.setTargetPosition(540);
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
