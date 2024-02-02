@@ -41,6 +41,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import java.lang.Math;
 
 import java.util.List;
 
@@ -203,7 +204,7 @@ public class TankMode_WithMechanism extends OpMode
         }
         if (scoreButton) {
             double offset = 0;
-            offset = (100 - abs(540 - leftArm.getCurrentPosition())) / 100;
+            offset = (100 - Math.abs(540 - leftArm.getCurrentPosition())) / 100;
             leftArm.setPower(1 - offset);
             leftArm.setTargetPosition(540);
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
