@@ -111,7 +111,7 @@ public class TankMode_WithMechanism extends OpMode
         wrist.setDirection(Servo.Direction.FORWARD);
         wrist.setPosition(270);
         claw.setDirection(Servo.Direction.FORWARD);
-        claw.setPosition(0.595);
+        claw.setPosition(0.63);
         launcher.setDirection(Servo.Direction.REVERSE);
         launcher.setPosition(0);
 
@@ -155,6 +155,7 @@ public class TankMode_WithMechanism extends OpMode
         double x = claw.getPosition();
         double y = wrist.getPosition();
         boolean launchButton;
+        double armPosition;
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
@@ -175,31 +176,11 @@ public class TankMode_WithMechanism extends OpMode
         leftDrive.setPower(leftPower);
         rightDrive.setPower(rightPower);
         telemetryAprilTag();
-
-        /*if (clawButtonOpen) {
-            claw.setPosition(0);
-            if (x == 0) {
-                if (!clawButtonOpen) {
-                    claw.setPosition(0);
-                } else if (clawButtonClose) {
-                    claw.setPosition(180);
-                }
-            }
-        } else if (clawButtonClose) {
-            claw.setPosition(180);
-            if (x >= 180) {
-                if (!clawButtonClose) {
-                    claw.setPosition(180);
-                } else if (clawButtonOpen) {
-                    claw.setPosition(0);
-                }
-            }
-        }*/
         if (clawButtonOpen) {
             claw.setPosition(0.5);
         }
         if (clawButtonClose) {
-            claw.setPosition(0.595);
+            claw.setPosition(0.65);
         }
         if (wristDown) {
             wrist.setPosition(0);
@@ -236,7 +217,7 @@ public class TankMode_WithMechanism extends OpMode
             rightArm.setTargetPosition(550);
             rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.setPosition(180);
-        } else if (armPower == 0){
+        } /*else if (armPower == 0){
             leftArm.setTargetPosition(leftArm.getCurrentPosition());
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightArm.setTargetPosition(rightArm.getCurrentPosition());
@@ -246,7 +227,18 @@ public class TankMode_WithMechanism extends OpMode
             leftArm.setPower(armPower);
             rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightArm.setPower(armPower);
+        }*/
+        if (armPower == 0) {
+            armPosition = leftArm.getCurrentPosition();
+        } else {
+            armPosition = armPower * 25 + leftArm.getCurrentPosition();
         }
+        leftArm.setTargetPosition((int) armPosition);
+        rightArm.setTargetPosition((int) armPosition);
+        leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftArm.setPower(1);
+        rightArm.setPower(1);
 
         launcher.setPosition(buttonPressToPower(launchButton));
 

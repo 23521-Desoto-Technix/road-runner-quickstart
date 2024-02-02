@@ -100,7 +100,7 @@ public class Red extends LinearOpMode {
         ModernRoboticsI2cRangeSensor rangeSensor;
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         boolean do_yellow = true;
-        claw.setPosition(0.61);
+        claw.setPosition(0.65);
         while (opModeInInit()) {
             telemetry.addLine(String.valueOf(firstPipelineRevised.getSelection()));
             telemetry.addData("Yellow? ", do_yellow);
@@ -129,9 +129,10 @@ public class Red extends LinearOpMode {
                     traj = drive.trajectoryBuilder(traj.end(), true)
                             //.back(2)
                             //.splineTo(new Vector2d(20, -3), Math.toRadians(135))
-                            .splineTo(new Vector2d(22, -34.5), Math.toRadians(-90))
+                            .splineTo(new Vector2d(22, -37), Math.toRadians(-90))
                             .build();
                     drive.followTrajectory(traj);
+                    //drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                 } else {
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .back(2)
@@ -150,6 +151,8 @@ public class Red extends LinearOpMode {
                             .splineTo(new Vector2d(27, -36), Math.toRadians(-90))
                             .build();
                     drive.followTrajectory(traj);
+
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                 } else {
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .back(2)
