@@ -228,7 +228,8 @@ public class TankMode_WithMechanism extends OpMode
             rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightArm.setPower(armPower);
         }*/
-        armPosition += armPower * 25
+        armPosition += armPower * 1;
+        telemetry.addData("Arm Position", armPosition);
         leftArm.setTargetPosition((int) armPosition);
         rightArm.setTargetPosition((int) armPosition);
         leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
