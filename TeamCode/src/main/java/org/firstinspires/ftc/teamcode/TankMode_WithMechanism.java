@@ -74,6 +74,7 @@ public class TankMode_WithMechanism extends OpMode
     private Servo launcher = null;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
+    private double armPosition = 0;
 
     public double buttonPressToPower (boolean buttonPress) {
         double buttonPower = 0.0;
@@ -155,7 +156,6 @@ public class TankMode_WithMechanism extends OpMode
         double x = claw.getPosition();
         double y = wrist.getPosition();
         boolean launchButton;
-        double armPosition;
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
@@ -228,11 +228,7 @@ public class TankMode_WithMechanism extends OpMode
             rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightArm.setPower(armPower);
         }*/
-        if (armPower == 0) {
-            armPosition = leftArm.getCurrentPosition();
-        } else {
-            armPosition = armPower * 25 + leftArm.getCurrentPosition();
-        }
+        armPosition += armPower * 25
         leftArm.setTargetPosition((int) armPosition);
         rightArm.setTargetPosition((int) armPosition);
         leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
