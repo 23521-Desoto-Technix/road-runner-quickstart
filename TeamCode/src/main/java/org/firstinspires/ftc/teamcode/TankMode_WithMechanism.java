@@ -136,6 +136,8 @@ public class TankMode_WithMechanism extends OpMode
     public void start() {
         runtime.reset();
         telemetry.addData("Status", "Running");
+        leftArm.setTargetPosition(leftArm.getCurrentPosition());
+        rightArm.setTargetPosition(rightArm.getCurrentPosition());
     }
 
     /*
