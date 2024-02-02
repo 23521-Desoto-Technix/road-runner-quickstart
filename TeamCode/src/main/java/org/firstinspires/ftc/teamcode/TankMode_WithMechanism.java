@@ -205,10 +205,10 @@ public class TankMode_WithMechanism extends OpMode
         }
         if (defaultAutoButton) {
             leftArm.setPower(0.5);
-            leftArm.setTargetPosition(0);
+            leftArm.setTargetPosition(100);
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightArm.setPower(0.5);
-            rightArm.setTargetPosition(0);
+            rightArm.setTargetPosition(100);
             rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.setPosition(0);
         } else if (scoreButton) {
