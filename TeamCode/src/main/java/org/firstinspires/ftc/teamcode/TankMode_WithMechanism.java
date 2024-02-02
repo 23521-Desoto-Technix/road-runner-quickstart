@@ -217,17 +217,17 @@ public class TankMode_WithMechanism extends OpMode
             rightArm.setTargetPosition(550);
             rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.setPosition(180);
-        } /*else if (armPower == 0){
-            leftArm.setTargetPosition(leftArm.getCurrentPosition());
+        } else if (armPower == 0){
             leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightArm.setTargetPosition(rightArm.getCurrentPosition());
             rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else {
             leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftArm.setPower(armPower);
             rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightArm.setPower(armPower);
-        }*/
+            leftArm.setTargetPosition(leftArm.getCurrentPosition());
+            rightArm.setTargetPosition(rightArm.getCurrentPosition());
+        }/*
         armPosition += armPower * 1;
         telemetry.addData("Arm Position", armPosition);
         leftArm.setTargetPosition((int) armPosition);
@@ -235,7 +235,7 @@ public class TankMode_WithMechanism extends OpMode
         leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftArm.setPower(1);
-        rightArm.setPower(1);
+        rightArm.setPower(1);*/
 
         launcher.setPosition(buttonPressToPower(launchButton));
 
