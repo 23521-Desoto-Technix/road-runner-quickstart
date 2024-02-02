@@ -204,7 +204,7 @@ public class TankMode_WithMechanism extends OpMode
             }
         }
         if (defaultAutoButton) {
-            if (leftArm.getPosition() < 110) {
+            if (leftArm.getCurrentPosition() < 110) {
                 leftArm.setTargetPosition(10);
                 rightArm.setTargetPosition(10);
                 leftArm.setPower(0.25);
