@@ -11,7 +11,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "please work")
+@TeleOp(name = "Dual VisionPortals")
 public class insane extends LinearOpMode {
 
     VisionPortal.Builder myVisionPortalBuilder;
@@ -19,8 +19,8 @@ public class insane extends LinearOpMode {
     int Portal_1_View_ID;
     boolean USE_WEBCAM_2;
     int Portal_2_View_ID;
-    AprilTagProcessor myAprilTagProcessor_1;
     AprilTagProcessor myAprilTagProcessor_2;
+    private FirstPipelineRevised firstPipelineRevised;
     VisionPortal myVisionPortal_1;
     VisionPortal myVisionPortal_2;
 
@@ -85,7 +85,6 @@ public class insane extends LinearOpMode {
         // First, create an AprilTagProcessor.Builder.
         myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
         // Create each AprilTagProcessor by calling build.
-        myAprilTagProcessor_1 = myAprilTagProcessorBuilder.build();
         myAprilTagProcessor_2 = myAprilTagProcessorBuilder.build();
         Make_first_VisionPortal();
         Make_second_VisionPortal();
@@ -110,7 +109,7 @@ public class insane extends LinearOpMode {
         // Set the stream format.
         myVisionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         // Add myAprilTagProcessor to the VisionPortal.Builder.
-        myVisionPortalBuilder.addProcessor(myAprilTagProcessor_1);
+        myVisionPortalBuilder.addProcessor(firstPipelineRevised);
         // Add the Portal View ID to the VisionPortal.Builder
         // Set the camera monitor view id.
         myVisionPortalBuilder.setLiveViewContainerId(Portal_1_View_ID);
@@ -171,27 +170,7 @@ public class insane extends LinearOpMode {
      * Display info (using telemetry) for a recognized AprilTag.
      */
     private void AprilTag_telemetry_for_Portal_1() {
-        List<AprilTagDetection> myAprilTagDetections_1;
-        AprilTagDetection thisDetection_1;
-
-        // Get a list of AprilTag detections.
-        myAprilTagDetections_1 = myAprilTagProcessor_1.getDetections();
-        telemetry.addData("Portal 1 - # AprilTags Detected", JavaUtil.listLength(myAprilTagDetections_1));
-        // Iterate through list and call a function to display info for each recognized AprilTag.
-        for (AprilTagDetection thisDetection_1_item : myAprilTagDetections_1) {
-            thisDetection_1 = thisDetection_1_item;
-            // Display info about the detection.
-            telemetry.addLine("");
-            if (thisDetection_1.metadata != null) {
-                telemetry.addLine("==== (ID " + thisDetection_1.id + ") " + thisDetection_1.metadata.name);
-                telemetry.addLine("XYZ " + JavaUtil.formatNumber(thisDetection_1.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.z, 6, 1) + "  (inch)");
-                telemetry.addLine("PRY " + JavaUtil.formatNumber(thisDetection_1.ftcPose.yaw, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.roll, 6, 1) + "  (deg)");
-                telemetry.addLine("RBE " + JavaUtil.formatNumber(thisDetection_1.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(thisDetection_1.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
-            } else {
-                telemetry.addLine("==== (ID " + thisDetection_1.id + ") Unknown");
-                telemetry.addLine("Center " + JavaUtil.formatNumber(thisDetection_1.center.x, 6, 0) + "" + JavaUtil.formatNumber(thisDetection_1.center.y, 6, 0) + " (pixels)");
-            }
-        }
+        telemetry.addData("Prop location", String.valueOf(firstPipelineRevised.getSelection()));
     }
 
     /**
