@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "Dual VisionPortals")
+@Autonomous(name = "Dual VisionPortals")
 public class insane extends LinearOpMode {
 
     VisionPortal.Builder myVisionPortalBuilder;
