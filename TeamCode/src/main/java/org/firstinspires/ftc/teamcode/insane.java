@@ -111,7 +111,7 @@ public class insane extends LinearOpMode {
         // Add myAprilTagProcessor to the VisionPortal.Builder.
         firstPipelineRevised = new FirstPipelineRevised();
         myVisionPortalBuilder.addProcessor(firstPipelineRevised);
-        myVisionPortalBuilder.setCameraResolution(new Size(1080, 720));
+        myVisionPortalBuilder.setCameraResolution(new Size(1280, 720));
         // Add the Portal View ID to the VisionPortal.Builder
         // Set the camera monitor view id.
         myVisionPortalBuilder.setLiveViewContainerId(Portal_1_View_ID);
