@@ -109,6 +109,7 @@ public class insane extends LinearOpMode {
         // Set the stream format.
         myVisionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         // Add myAprilTagProcessor to the VisionPortal.Builder.
+        firstPipelineRevised = new FirstPipelineRevised();
         myVisionPortalBuilder.addProcessor(firstPipelineRevised);
         myVisionPortalBuilder.setCameraResolution(new Size(1080, 720));
         // Add the Portal View ID to the VisionPortal.Builder
