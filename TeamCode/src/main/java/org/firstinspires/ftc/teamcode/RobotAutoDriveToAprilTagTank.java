@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -101,9 +102,14 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
 
     private DcMotor leftDrive   = null;  //  Used to control the left drive wheel
     private DcMotor rightDrive  = null;  //  Used to control the right drive wheel
+    private DcMotor rightArm  = null;
+    private DcMotor leftArm  = null;
+    private Servo wrist = null;
+    private Servo claw = null;
+    private Servo launcher = null;
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = -1;    // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 6;    // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -122,7 +128,11 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
         // step (using the FTC Robot Controller app on the phone).
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
+        leftArm  = hardwareMap.get(DcMotor.class, "left_arm");
+        rightArm  = hardwareMap.get(DcMotor.class, "right_arm");
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        claw = hardwareMap.get(Servo.class, "claw");
+        launcher = hardwareMap.get(Servo.class, "launcher");
         // To drive forward, most robots need the motor on one side to be reversed because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Single Gear Reduction or 90 Deg drives may require direction flips
@@ -140,8 +150,35 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
 
         while (opModeIsActive())
         {
+            double leftPower;
+            double rightPower;
+            double armPower;
+            boolean wristUp;
+            boolean wristDown;
+            boolean clawButtonOpen;
+            boolean clawButtonClose;
+            boolean scoreButton;
+            double x = claw.getPosition();
+            double y = wrist.getPosition();
+            boolean launchButton;
+            // Choose to drive using either Tank Mode, or POV Mode
+            // Comment out the method that's not used.  The default below is POV.
+
+            // Tank Mode uses one stick to control each wheel.
+            // - This requires no math, but it is hard to drive forward slowly and keep straight.
+            leftPower  = -gamepad1.left_stick_y;
+            rightPower = -gamepad1.right_stick_y;
+            armPower = -gamepad2.left_stick_y;
+            wristUp = gamepad2.dpad_up;
+            wristDown = gamepad2.dpad_down;
+            clawButtonOpen = gamepad2.a;
+            clawButtonClose = gamepad2.b;
+            scoreButton = gamepad2.x;
+            launchButton = gamepad2.right_bumper;
             targetFound = false;
             desiredTag  = null;
+            leftArm.setTargetPosition(leftArm.getCurrentPosition());
+            rightArm.setTargetPosition(rightArm.getCurrentPosition());
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -186,17 +223,64 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
                 turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
 
                 telemetry.addData("Auto","Drive %5.2f, Turn %5.2f", drive, turn);
+                moveRobot(drive, turn);
             } else {
 
                 // drive using manual POV Joystick mode.
-                drive = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                turn  = -gamepad1.right_stick_x / 4.0;  // Reduce turn rate to 25%.
+                leftDrive.setPower(gamepad1.left_stick_y);  // Reduce drive rate to 50%.
+                rightDrive.setPower(-gamepad1.right_stick_y);  // Reduce turn rate to 25%.
                 telemetry.addData("Manual","Drive %5.2f, Turn %5.2f", drive, turn);
+            }
+            if (clawButtonOpen) {
+                claw.setPosition(0.5);
+            }
+            if (clawButtonClose) {
+                claw.setPosition(0.65);
+            }
+            if (wristDown) {
+                wrist.setPosition(0);
+                if (y == 0) {
+                    if (!wristDown) {
+                        wrist.setPosition(0);
+                    } else if (wristUp) {
+                        claw.setPosition(180);
+                    }
+                }
+            } else if (wristUp) {
+                wrist.setPosition(180);
+                if (y >= 180) {
+                    if (!wristUp) {
+                        claw.setPosition(180);
+                    } else if (wristDown) {
+                        claw.setPosition(0);
+                    }
+                }
+            }
+            if (scoreButton) {
+                double offset = 0;
+                offset = leftArm.getCurrentPosition() - 400;
+                leftArm.setPower(1 - offset);
+                leftArm.setTargetPosition(540);
+                leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightArm.setPower(1 - offset);
+                rightArm.setTargetPosition(540);
+                rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                wrist.setPosition(180);
+            } else if (armPower == 0){
+                leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else {
+                leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftArm.setPower(armPower);
+                rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightArm.setPower(armPower);
+                leftArm.setTargetPosition(leftArm.getCurrentPosition());
+                rightArm.setTargetPosition(rightArm.getCurrentPosition());
             }
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, turn);
+
             sleep(10);
         }
     }

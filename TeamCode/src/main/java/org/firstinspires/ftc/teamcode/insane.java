@@ -2,16 +2,28 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 @Autonomous(name = "Dual VisionPortals")
 public class insane extends LinearOpMode {
@@ -25,6 +37,11 @@ public class insane extends LinearOpMode {
     private FirstPipelineRevised firstPipelineRevised;
     VisionPortal myVisionPortal_1;
     VisionPortal myVisionPortal_2;
+    private DcMotor leftArm = null;
+    private DcMotor rightArm = null;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+    private Servo claw = null;
 
     /**
      * Describe this function...
@@ -59,21 +76,129 @@ public class insane extends LinearOpMode {
         initMultiPortals();
         // Initialize AprilTag before waitForStart.
         initAprilTag();
+        leftArm = hardwareMap.get(DcMotor.class, "left_arm");
+        rightArm = hardwareMap.get(DcMotor.class, "right_arm");
+        claw = hardwareMap.get(Servo.class, "claw");
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        rightArm.setDirection(DcMotor.Direction.FORWARD);
+        leftArm.setTargetPosition(0);
+        rightArm.setTargetPosition(0);
+        leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // Wait for the Start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
+        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        boolean do_yellow = true;
+        setManualExposure(1, 250);
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                AprilTag_telemetry_for_Portal_1();
-                AprilTag_telemetry_for_Portal_2();
-                AprilTag_telemetry_legend();
-                Toggle_camera_streams();
-                // Push telemetry to the Driver Station.
-                telemetry.update();
-                // Share the CPU.
-                sleep(20);
+            telemetry.addLine(String.valueOf(firstPipelineRevised.getSelection()));
+            telemetry.addData("Yellow? ", do_yellow);
+            telemetry.update();
+            if (gamepad1.dpad_right) {
+                do_yellow = true;
+            }
+            if (gamepad1.dpad_left) {
+                do_yellow = false;
+            }
+        }
+        waitForStart();
+        myVisionPortal_1.setProcessorEnabled(firstPipelineRevised, true);
+        if (opModeIsActive()) {
+            telemetry.addLine(String.valueOf(firstPipelineRevised.getSelection()));
+            telemetry.update();
+            Trajectory traj = null;
+            double selection = firstPipelineRevised.getSelection();
+            myVisionPortal_2.close();
+            if (selection == 3) {
+                traj = drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(12.5, 0), 0)
+                        .splineTo(new Vector2d(27, -3), Math.toRadians(-45))
+                        .build();
+                drive.followTrajectory(traj);
+
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            .back(3)
+                            .build();
+                    drive.followTrajectory(traj);
+                    drive.turn(Math.toRadians(135));
+                    straighten(6);
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
+            } if (selection == 2) {
+                traj = drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(28.5, 0), 0)
+                        .build();
+                drive.followTrajectory(traj);
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            .back(2)
+                            .splineTo(new Vector2d(27, -3), Math.toRadians(-90))
+                            .splineTo(new Vector2d(27, -36), Math.toRadians(-90))
+                            .build();
+                    drive.followTrajectory(traj);
+
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
+            } if (selection == 1) {
+                traj = drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(12.5, 0), 0)
+                        .splineTo(new Vector2d(27, 4), Math.toRadians(45))
+                        .build();
+                drive.followTrajectory(traj);
+                if (do_yellow) {
+                    traj = drive.trajectoryBuilder(traj.end(), true)
+                            //.back(5)
+                            //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
+                            .splineTo(new Vector2d(35, -27), Math.toRadians(-90))
+                            .build();
+                    drive.followTrajectory(traj);
+                    telemetry.addData("Heading", drive.getRawExternalHeading());
+                    telemetry.update();
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
+                            .back(9)
+                            .build();
+                    drive.followTrajectory(traj);
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineTo(new Vector2d(35, -25), Math.toRadians(-90))
+                            .splineTo(new Vector2d(35, -35), Math.toRadians(-90))
+                            .build();
+                } else {
+                    traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .back(2)
+                            .build();
+                    drive.followTrajectory(traj);
+                }
+                //drive.followTrajectory(traj);
+            }
+            if (do_yellow) {
+                leftArm.setTargetPosition(537);
+                rightArm.setTargetPosition(537);
+                leftArm.setPower(1);
+                rightArm.setPower(1);
+                while (leftArm.getCurrentPosition() < 537) {
+                }
+                claw.setPosition(0.5);
+                sleep(100);
+                leftArm.setTargetPosition(150);
+                rightArm.setTargetPosition(150);
+                while (leftArm.getCurrentPosition() > 250) {
+                }
+                stop();
             }
         }
     }
@@ -214,5 +339,117 @@ public class insane extends LinearOpMode {
         telemetry.addLine("XYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
+    }
+
+    private void straighten(int tag_id) {
+        boolean targetFound = false;
+        AprilTagDetection desiredTag  = null;
+        final double SPEED_GAIN =   0.1;
+        final double TURN_GAIN  =   -0.02 ;
+
+        final double MAX_AUTO_SPEED = 0.75;
+        final double MAX_AUTO_TURN  = 0.25;
+        // Step through the list of detected tags and look for a matching tag
+        double rangeError = 10000;
+        double headingError = 10000;
+        while ((rangeError > 0.5 || headingError > 0.5) && opModeIsActive()) {
+            targetFound = false;
+            desiredTag = null;
+            List<AprilTagDetection> currentDetections = myAprilTagProcessor_2.getDetections();
+            while (!targetFound && opModeIsActive()) {
+                for (AprilTagDetection detection : currentDetections) {
+                    // Look to see if we have size info on this tag.
+                    if (detection.metadata != null) {
+                        //  Check to see if we want to track towards this tag.
+                        //telemetry.addData("desired", tag_id);
+                        //telemetry.addData("tag", detection.id);
+                        if (detection.id == tag_id) {
+                            // Yes, we want to use this tag.
+                            targetFound = true;
+                            desiredTag = detection;
+                            break;  // don't look any further.
+                        } else {
+                            // This tag is in the library, but we do not want to track it right now.
+                            //telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        }
+                    } else {
+                        // This tag is NOT in the library, so we don't have enough information to track to it.
+                        //telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    }
+
+                }
+                //telemetry.update();
+            }
+            telemetry.addData("found",targetFound);
+            telemetry.addData("detection", desiredTag);
+            if (targetFound) {
+                rangeError = (desiredTag.ftcPose.range-8);
+                headingError = desiredTag.ftcPose.x;
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.  Clip it to the maximum
+                double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                double turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+                moveRobot(-drive, -turn);
+                telemetry.addData("Error", "range %5.2f, heading %5.2f", rangeError, headingError);
+                telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f", drive, turn);
+                telemetry.update();
+            } else {
+                moveRobot(0,0);
+            }
+        }
+    }
+    public void moveRobot(double x, double yaw) {
+        // Calculate left and right wheel powers.
+        double leftPower    = x - yaw;
+        double rightPower   = x + yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
+        if (max >1.0) {
+            leftPower /= max;
+            rightPower /= max;
+        }
+
+        // Send powers to the wheels.
+        //telemetry.addData("left", leftPower);
+        //telemetry.addData("right", rightPower);
+        //telemetry.update();
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
+    }
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (myVisionPortal_2 == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (myVisionPortal_2.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (myVisionPortal_2.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = myVisionPortal_2.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = myVisionPortal_2.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
     }
 }
