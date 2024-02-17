@@ -397,6 +397,7 @@ public class insane extends LinearOpMode {
                 moveRobot(0,0);
             }
         }
+        moveRobot(0,0)
     }
     public void moveRobot(double x, double yaw) {
         // Calculate left and right wheel powers.
