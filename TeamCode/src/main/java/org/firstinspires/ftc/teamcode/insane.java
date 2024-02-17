@@ -379,8 +379,10 @@ public class insane extends LinearOpMode {
                         }
     
                     }
+                    
                 }
-                //telemetry.update();
+                AprilTag_telemetry_for_Portal_2
+                telemetry.update();
             }
             telemetry.addData("found",targetFound);
             telemetry.addData("detection", desiredTag);
