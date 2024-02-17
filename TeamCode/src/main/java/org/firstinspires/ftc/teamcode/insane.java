@@ -357,26 +357,28 @@ public class insane extends LinearOpMode {
             desiredTag = null;
             List<AprilTagDetection> currentDetections = myAprilTagProcessor_2.getFreshDetections();
             while (!targetFound && opModeIsActive()) {
-                for (AprilTagDetection detection : currentDetections) {
-                    // Look to see if we have size info on this tag.
-                    if (detection.metadata != null) {
-                        //  Check to see if we want to track towards this tag.
-                        //telemetry.addData("desired", tag_id);
-                        //telemetry.addData("tag", detection.id);
-                        if (detection.id == tag_id) {
-                            // Yes, we want to use this tag.
-                            targetFound = true;
-                            desiredTag = detection;
-                            break;  // don't look any further.
+                if (currentDetections) {
+                    for (AprilTagDetection detection : currentDetections) {
+                        // Look to see if we have size info on this tag.
+                        if (detection.metadata != null) {
+                            //  Check to see if we want to track towards this tag.
+                            //telemetry.addData("desired", tag_id);
+                            //telemetry.addData("tag", detection.id);
+                            if (detection.id == tag_id) {
+                                // Yes, we want to use this tag.
+                                targetFound = true;
+                                desiredTag = detection;
+                                break;  // don't look any further.
+                            } else {
+                                // This tag is in the library, but we do not want to track it right now.
+                                //telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                            }
                         } else {
-                            // This tag is in the library, but we do not want to track it right now.
-                            //telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                            // This tag is NOT in the library, so we don't have enough information to track to it.
+                            //telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                         }
-                    } else {
-                        // This tag is NOT in the library, so we don't have enough information to track to it.
-                        //telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+    
                     }
-
                 }
                 //telemetry.update();
             }
