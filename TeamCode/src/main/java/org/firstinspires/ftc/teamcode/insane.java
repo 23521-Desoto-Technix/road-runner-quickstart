@@ -357,7 +357,7 @@ public class insane extends LinearOpMode {
             desiredTag = null;
             List<AprilTagDetection> currentDetections = myAprilTagProcessor_2.getFreshDetections();
             while (!targetFound && opModeIsActive()) {
-                if (currentDetections) {
+                if (currentDetections != null) {
                     for (AprilTagDetection detection : currentDetections) {
                         // Look to see if we have size info on this tag.
                         if (detection.metadata != null) {
