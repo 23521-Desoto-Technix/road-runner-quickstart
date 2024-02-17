@@ -311,10 +311,11 @@ public class insane extends LinearOpMode {
 
         // Get a list of AprilTag detections.
         myAprilTagDetections_2 = myAprilTagProcessor_2.getFreshDetections();
-        telemetry.addLine("");
-        telemetry.addData("Portal 2 - # AprilTags Detected", JavaUtil.listLength(myAprilTagDetections_2));
+        
         // Iterate through list and call a function to display info for each recognized AprilTag.
         if (myAprilTagDetections_2 != null) {
+            telemetry.addLine("");
+            telemetry.addData("Portal 2 - # AprilTags Detected", JavaUtil.listLength(myAprilTagDetections_2));
             for (AprilTagDetection thisDetection_2_item : myAprilTagDetections_2) {
                 thisDetection_2 = thisDetection_2_item;
                 // Display info about the detection.
