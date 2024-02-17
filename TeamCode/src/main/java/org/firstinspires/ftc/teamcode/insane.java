@@ -355,7 +355,7 @@ public class insane extends LinearOpMode {
         while ((rangeError > 0.5 || headingError > 0.5) && opModeIsActive()) {
             targetFound = false;
             desiredTag = null;
-            List<AprilTagDetection> currentDetections = myAprilTagProcessor_2.getDetections();
+            List<AprilTagDetection> currentDetections = myAprilTagProcessor_2.getFreshDetections();
             while (!targetFound && opModeIsActive()) {
                 for (AprilTagDetection detection : currentDetections) {
                     // Look to see if we have size info on this tag.
@@ -397,7 +397,7 @@ public class insane extends LinearOpMode {
                 moveRobot(0,0);
             }
         }
-        moveRobot(0,0)
+        moveRobot(0,0);
     }
     public void moveRobot(double x, double yaw) {
         // Calculate left and right wheel powers.
