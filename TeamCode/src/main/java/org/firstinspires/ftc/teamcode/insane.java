@@ -403,6 +403,7 @@ public class insane extends LinearOpMode {
             } else {
                 moveRobot(0,0);
             }
+            sleep(10)
         }
         moveRobot(0,0);
     }
