@@ -112,7 +112,7 @@ public class insane extends LinearOpMode {
             telemetry.update();
             Trajectory traj = null;
             double selection = firstPipelineRevised.getSelection();
-            myVisionPortal_2.close();
+            myVisionPortal_1.close();
             if (selection == 3) {
                 traj = drive.trajectoryBuilder(new Pose2d())
                         .splineTo(new Vector2d(12.5, 0), 0)
