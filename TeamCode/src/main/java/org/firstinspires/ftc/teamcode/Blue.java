@@ -84,7 +84,7 @@ public class Blue extends LinearOpMode {
                     drive.followTrajectory(traj);
                     drive.turn(Math.toRadians(-90) - drive.getRawExternalHeading());
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
-                            .back(9)
+                            .back(10)
                             .build();
                     drive.followTrajectory(traj);
                 } else {
@@ -127,14 +127,14 @@ public class Blue extends LinearOpMode {
                 drive.followTrajectory(traj);
                 if (do_yellow) {
                     traj = drive.trajectoryBuilder(traj.end(), true)
-                            .back(4)
+                            .back(2)
                             //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
                             //.splineTo(new Vector2d(22, 35), Math.toRadians(90))
                             .build();
                     drive.followTrajectory(traj);
                     drive.turn(Math.toRadians(-145.5));
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
-                            .splineTo(new Vector2d(23, 36), Math.toRadians(90))
+                            .splineTo(new Vector2d(22, 37), Math.toRadians(90))
                             .build();
                     drive.followTrajectory(traj);
                     drive.turn(Math.toRadians(-90) - drive.getRawExternalHeading());
@@ -150,13 +150,13 @@ public class Blue extends LinearOpMode {
                 rightArm.setTargetPosition(567);
                 leftArm.setPower(1);
                 rightArm.setPower(1);
-                while (leftArm.getCurrentPosition() < 537) {
+                while (leftArm.getCurrentPosition() < 537 && !isStopRequested()) {
                 }
                 claw.setPosition(0.5);
                 sleep(100);
                 leftArm.setTargetPosition(250);
                 rightArm.setTargetPosition(250);
-                while (leftArm.getCurrentPosition() > 250) {
+                while (leftArm.getCurrentPosition() > 250 && !isStopRequested()) {
                 }
             }
             traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)

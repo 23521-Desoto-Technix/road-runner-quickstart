@@ -178,10 +178,10 @@ public class TankMode_WithMechanism extends OpMode
         rightDrive.setPower(rightPower);
         telemetryAprilTag();
         if (clawButtonOpen) {
-            claw.setPosition(0.5);
+            claw.setPosition(0.58);
         }
         if (clawButtonClose) {
-            claw.setPosition(0.65);
+            claw.setPosition(0.67);
         }
         if (wristDown) {
             wrist.setPosition(0);
