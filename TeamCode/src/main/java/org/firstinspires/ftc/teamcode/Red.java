@@ -100,7 +100,7 @@ public class Red extends LinearOpMode {
         ModernRoboticsI2cRangeSensor rangeSensor;
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         boolean do_yellow = true;
-        claw.setPosition(0.65);
+        claw.setPosition(0.7);
         while (opModeInInit()) {
             telemetry.addLine(String.valueOf(firstPipelineRevised.getSelection()));
             telemetry.addData("Yellow? ", do_yellow);
