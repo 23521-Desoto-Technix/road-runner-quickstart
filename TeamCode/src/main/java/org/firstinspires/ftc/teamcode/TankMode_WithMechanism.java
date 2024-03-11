@@ -174,7 +174,7 @@ public class TankMode_WithMechanism extends OpMode
             leftPower  = -gamepad1.left_stick_y / 2;
             rightPower = -gamepad1.right_stick_y / 2;
         }
-        armPower = -gamepad2.left_stick_y;
+        armPower = -gamepad2.left_stick_y*0.75;
         wristUp = gamepad2.dpad_up;
         wristDown = gamepad2.dpad_down;
         clawButtonOpen = gamepad2.a;
