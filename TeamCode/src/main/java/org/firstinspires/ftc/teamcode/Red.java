@@ -132,7 +132,9 @@ public class Red extends LinearOpMode {
                             .splineTo(new Vector2d(22, -37), Math.toRadians(-90))
                             .build();
                     drive.followTrajectory(traj);
-                    //drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                 } else {
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .back(2)
@@ -169,11 +171,13 @@ public class Red extends LinearOpMode {
                     traj = drive.trajectoryBuilder(traj.end(), true)
                             //.back(5)
                             //.splineTo(new Vector2d(30, -3), Math.toRadians(-90))
-                            .splineTo(new Vector2d(34, -27), Math.toRadians(-90))
+                            .splineTo(new Vector2d(32, -27), Math.toRadians(-90))
                             .build();
                     drive.followTrajectory(traj);
                     telemetry.addData("Heading", drive.getRawExternalHeading());
                     telemetry.update();
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
+                    drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                     drive.turn(Math.toRadians(90) - drive.getRawExternalHeading());
                     traj = drive.trajectoryBuilder(drive.getPoseEstimate(), true)
                             .back(9)

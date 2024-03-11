@@ -95,8 +95,8 @@ public class TankMode_WithMechanism extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         leftArm = hardwareMap.get(DcMotor.class, "left_arm");
         rightArm = hardwareMap.get(DcMotor.class, "right_arm");
         wrist = hardwareMap.get(Servo.class, "wrist");
@@ -113,7 +113,7 @@ public class TankMode_WithMechanism extends OpMode
         wrist.setDirection(Servo.Direction.FORWARD);
         wrist.setPosition(270);
         claw.setDirection(Servo.Direction.FORWARD);
-        claw.setPosition(0.63);
+        claw.setPosition(0.67);
         launcher.setDirection(Servo.Direction.REVERSE);
         launcher.setPosition(0);
 
