@@ -165,7 +165,7 @@ public class TankMode_WithMechanism extends OpMode
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        if (gamepad1.left_bumper) {
+        if (gamepad1.right_bumper) {
             leftPower  = -gamepad1.left_stick_y;
             rightPower = -gamepad1.right_stick_y;
         } else {
