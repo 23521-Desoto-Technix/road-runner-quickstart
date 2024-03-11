@@ -110,6 +110,8 @@ public class TankMode_WithMechanism extends OpMode
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         leftArm.setDirection(DcMotor.Direction.REVERSE);
         rightArm.setDirection(DcMotor.Direction.FORWARD);
         wrist.setDirection(Servo.Direction.FORWARD);
