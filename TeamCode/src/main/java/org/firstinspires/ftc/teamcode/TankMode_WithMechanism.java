@@ -108,6 +108,8 @@ public class TankMode_WithMechanism extends OpMode
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setMode(DcMotor.Mode.RUN_USING_ENCODER;)
+        rightDrive.setMode(DcMotor.Mode.RUN_USING_ENCODER;)
         leftArm.setDirection(DcMotor.Direction.REVERSE);
         rightArm.setDirection(DcMotor.Direction.FORWARD);
         wrist.setDirection(Servo.Direction.FORWARD);
@@ -163,8 +165,13 @@ public class TankMode_WithMechanism extends OpMode
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        leftPower  = -gamepad1.left_stick_y;
-        rightPower = -gamepad1.right_stick_y;
+        if (gamepad1.left_bumper) {
+            leftPower  = -gamepad1.left_stick_y;
+            rightPower = -gamepad1.right_stick_y;
+        } else {
+            leftPower  = -gamepad1.left_stick_y / 2;
+            rightPower = -gamepad1.right_stick_y / 2;
+        }
         armPower = -gamepad2.left_stick_y;
         wristUp = gamepad2.dpad_up;
         wristDown = gamepad2.dpad_down;
